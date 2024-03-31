@@ -166,7 +166,7 @@ This software is provided "AS IS" with NO IMPLICIT OR EXPLICIT warranty. It's wo
 Shoutout to **Roshkins** for the original repo:
 https://github.com/roshkins/IddSampleDriver
 
-Shoutout to **Baloukj** for being the first to push the new Microsoft Driver public.
+Shoutout to **Baloukj** for the 8-bit / 10-bit support. (Also, first to push the new Microsoft Driver public!)
 https://github.com/baloukj/IddSampleDriver
 
 Shoutout to **Anakngtokwa** for assisting with finding driver sources.
@@ -175,6 +175,8 @@ Shoutout to **Anakngtokwa** for assisting with finding driver sources.
 https://github.com/microsoft/Windows-driver-samples/tree/master/video/IndirectDisplay
 
 Thanks to **AKATrevorJay** https://github.com/akatrevorjay/edid-generator for the hi-res EDID.
+
+Shoutout to **zjoasan** and **Bud** for the helper scripts and build support!
 
 ## Star History
 

@@ -16,7 +16,7 @@ Environment:
 --*/
 
 #include "Driver.h"
-#include "Driver.tmh"
+//#include "Driver.tmh"
 #include<fstream>
 #include<sstream>
 #include<string>
@@ -732,7 +732,7 @@ void CreateTargetMode(IDDCX_TARGET_MODE& Mode, UINT Width, UINT Height, UINT VSy
 void CreateTargetMode2(IDDCX_TARGET_MODE2& Mode, UINT Width, UINT Height, UINT VSync)
 {
 	Mode.Size = sizeof(Mode);
-	Mode.BitsPerComponent.Rgb = IDDCX_BITS_PER_COMPONENT_10;
+	Mode.BitsPerComponent.Rgb = IDDCX_BITS_PER_COMPONENT_8 | IDDCX_BITS_PER_COMPONENT_10;
 	CreateTargetMode(Mode.TargetVideoSignalInfo.targetVideoSignalInfo, Width, Height, VSync);
 }
 
@@ -833,7 +833,7 @@ NTSTATUS IddSampleEvtIddCxParseMonitorDescription2(
 			pInArgs->pMonitorModes[ModeIndex].Size = sizeof(IDDCX_MONITOR_MODE2);
 			pInArgs->pMonitorModes[ModeIndex].Origin = IDDCX_MONITOR_MODE_ORIGIN_MONITORDESCRIPTOR;
 			pInArgs->pMonitorModes[ModeIndex].MonitorVideoSignalInfo = s_KnownMonitorModes2[ModeIndex];
-			pInArgs->pMonitorModes[ModeIndex].BitsPerComponent.Rgb = IDDCX_BITS_PER_COMPONENT_10;
+			pInArgs->pMonitorModes[ModeIndex].BitsPerComponent.Rgb = IDDCX_BITS_PER_COMPONENT_8 | IDDCX_BITS_PER_COMPONENT_10;
 		}
 
 		// Set the preferred mode as represented in the EDID
