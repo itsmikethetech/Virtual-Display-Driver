@@ -6,34 +6,48 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
         Exit
     }
 }
-#Register PSGallery if not regitered
-if (! (Get-PSRepository | where-object {$_.Name -eq "PSGallery"})) {
-	Register-PSRepository -Name PSGalleryPreview -SourceLocation https://www.Preview.PowerShellGallery.Com/api/v2
-	Find-Module DSC* -Repository PSGalleryPreview
-	Install-Module DSCTestModule -Repository PSGalleryPreview -Verbose -Forse
+
+# Import the necessary modules
+Import-Module -Name "PowerShellGet"
+Import-Module -Name "PackageManagement"
+
+# Define the repository name and URL
+$repoName = "PSGallery"
+$repoUrl = "https://www.powershellgallery.com/api/v2"
+
+# Check if the repository is registered
+if (-not (Get-PSRepository -Name $repoName)) {
+    # Register the repository
+    Register-PSRepository -Name $repoName -SourceLocation $repoUrl -InstallationPolicy Trusted
 }
 
-#A module check and install if needed script
-function Load-Module ($m) {
-    # If module is not imported or not installed 
-    if (Get-Module | Where-Object {$_.Name -eq $m}) {
-        # If module is not imported, but available on disk then import
-        if (Get-Module -ListAvailable | Where-Object {$_.Name -eq $m}) {
-            Import-Module $m -Force    
-        }
-        else {
-            # If module is not imported, not available on disk, but is in online gallery then install and import
-            if (Find-Module -Name $m | Where-Object {$_.Name -eq $m}) {
-                Install-Module -Name $m -Force 
-                Import-Module $m Force
-            }
-        }
-    }
+# Define the module name and version
+$moduleName1 = "DisplayConfig"
+$version1 = "1.0.5"
+
+# Define the module name and version
+$moduleName2 = "MonitorConfig"
+$version2 = "1.0.3"
+
+# Check if the module is installed
+if (-not (Get-InstalledModule -Name $moduleName1 -MinimumVersion $version1)) {
+    # Install the module
+    Install-Module -Name $moduleName1 -Repository $repoName -RequiredVersion $version1
 }
 
-Load-Module "MonitorConfig" 
-Load-Module "DisplayConfig" 
+# Check if the module is installed
+if (-not (Get-InstalledModule -Name $moduleName2 -MinimumVersion $version2)) {
+    # Install the module
+    Install-Module -Name $moduleName2 -Repository $repoName -RequiredVersion $version2
+}
 
+# Import the module
+Import-Module -Name $moduleName1 -RequiredVersion $version1
+
+# Import the module
+Import-Module -Name $moduleName2 -RequiredVersion $version2
+
+# Use the module's functions and cmdlets in your script
 # Check if there are enough arguments
 $numArgs = $args.Count
 switch ($numArgs) {
@@ -47,6 +61,5 @@ switch ($numArgs) {
 	}
     default { Write-Error "Invalid number of arguments: $numArgs"; break }
 }
-
-# Getting the right display to set resolution
+# Setting the resolution on the correct display.
 Get-DisplayConfig | Set-DisplayResolution -DisplayId $disp -Width $vres -Height $hres | Set-DisplayRefreshRate -DisplayId $disp -RefreshRate $rate | Use-DisplayConfig
