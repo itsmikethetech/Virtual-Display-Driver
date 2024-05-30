@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>VDD Panel</value>
+  </data>
+	<data name="AppDescription" xml:space="preserve">
+		<value>VDD Panel</value>
+  	</data>
+  <data name="Shell_Main.Content" xml:space="preserve">
+    <value>Main</value>
+  </data>
+  <data name="Shell_Configure.Content" xml:space="preserve">
+    <value>Configure</value>
+  </data>
+  <data name="WebView_Loading.Text" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="WebView_FailedMessage.Text" xml:space="preserve">
+    <value>Page failed to load. Check connection and reload.</value>
+  </data>
+  <data name="BrowserBackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Browser back</value>
+  </data>
+  <data name="BrowserBackButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Browser back</value>
+  </data>
+  <data name="BrowserForwardButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Browser forward</value>
+  </data>
+  <data name="BrowserForwardButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Browser forward</value>
+  </data>
+  <data name="WebView_Reload.Content" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="ReloadButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="ReloadButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="OpenInBrowserButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open in browser</value>
+  </data>
+  <data name="OpenInBrowserButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Open in browser</value>
+  </data>
+  <data name="Shell_GitHub.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="Settings_Personalization.Text" xml:space="preserve">
+    <value>Personalization</value>
+  </data>
+  <data name="Settings_Theme.Text" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>About this application</value>
+  </data>
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
+    <value>TODO: Replace with your app description.</value>
+  </data>
+  <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
+    <value>Privacy Statement</value>
+  </data>
+  <data name="SettingsPage_PrivacyTermsLink.NavigateUri" xml:space="preserve">
+    <value>https://YourPrivacyUrlGoesHere/</value>
+  </data>
+  <data name="AppNotificationSamplePayload" xml:space="preserve">
+    <value>&lt;toast launch="action=ToastClick"&gt;
+  &lt;visual&gt;
+    &lt;binding template="ToastGeneric"&gt;
+      &lt;text&gt;App Notification&lt;/text&gt;
+      &lt;text&gt;&lt;/text&gt;
+      &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/WindowIcon.ico"/&gt;
+    &lt;/binding&gt;
+  &lt;/visual&gt;
+  &lt;actions&gt;
+    &lt;action content="Settings" arguments="action=Settings"/&gt;
+  &lt;/actions&gt;
+&lt;/toast&gt;</value>
+  </data>
+</root>

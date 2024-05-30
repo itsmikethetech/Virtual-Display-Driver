@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AppInstaller Uri="{AppInstallerUri}"
+              Version="{Version}"
+              xmlns="http://schemas.microsoft.com/appx/appinstaller/2017/2">
+
+  <!-- Read more about updating settings with Package.appinstaller at https://docs.microsoft.com/windows/msix/app-installer/update-settings -->
+
+  <MainBundle Name="{Name}"
+              Version="{Version}"
+              Publisher="{Publisher}"
+              Uri="{MainPackageUri}"/>
+
+  <UpdateSettings>
+    <OnLaunch HoursBetweenUpdateChecks="0" />
+  </UpdateSettings>
+
+</AppInstaller>

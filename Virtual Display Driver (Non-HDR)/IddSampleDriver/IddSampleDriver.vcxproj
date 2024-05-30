@@ -52,6 +52,7 @@
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <RootNamespace>IddSampleDriver</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
@@ -101,6 +102,7 @@
     <IndirectDisplayDriver>true</IndirectDisplayDriver>
     <IDDCX_VERSION_MAJOR>1</IDDCX_VERSION_MAJOR>
     <IDDCX_VERSION_MINOR>0</IDDCX_VERSION_MINOR>
+    <UMDF_VERSION_MINOR>27</UMDF_VERSION_MINOR>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -109,6 +111,7 @@
     <IndirectDisplayDriver>true</IndirectDisplayDriver>
     <IDDCX_VERSION_MAJOR>1</IDDCX_VERSION_MAJOR>
     <IDDCX_VERSION_MINOR>0</IDDCX_VERSION_MINOR>
+    <UMDF_VERSION_MINOR>27</UMDF_VERSION_MINOR>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -116,8 +119,10 @@
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
     <IndirectDisplayDriver>true</IndirectDisplayDriver>
     <IDDCX_VERSION_MAJOR>1</IDDCX_VERSION_MAJOR>
-    <IDDCX_VERSION_MINOR>0</IDDCX_VERSION_MINOR>
+    <IDDCX_VERSION_MINOR>4</IDDCX_VERSION_MINOR>
     <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
+    <UMDF_VERSION_MINOR>31</UMDF_VERSION_MINOR>
+    <UMDF_MINIMUM_VERSION_REQUIRED>27</UMDF_MINIMUM_VERSION_REQUIRED>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -125,7 +130,9 @@
     <UMDF_VERSION_MAJOR>2</UMDF_VERSION_MAJOR>
     <IndirectDisplayDriver>true</IndirectDisplayDriver>
     <IDDCX_VERSION_MAJOR>1</IDDCX_VERSION_MAJOR>
-    <IDDCX_VERSION_MINOR>0</IDDCX_VERSION_MINOR>
+    <IDDCX_VERSION_MINOR>4</IDDCX_VERSION_MINOR>
+    <UMDF_VERSION_MINOR>31</UMDF_VERSION_MINOR>
+    <UMDF_MINIMUM_VERSION_REQUIRED>27</UMDF_MINIMUM_VERSION_REQUIRED>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -207,6 +214,7 @@
       <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
       <ExceptionHandling>Async</ExceptionHandling>
       <EnablePREfast>true</EnablePREfast>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\Common\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);OneCoreUAP.lib;avrt.lib</AdditionalDependencies>
@@ -219,6 +227,7 @@
       <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
       <ExceptionHandling>Async</ExceptionHandling>
       <EnablePREfast>true</EnablePREfast>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\Common\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);OneCoreUAP.lib;avrt.lib</AdditionalDependencies>
@@ -231,6 +240,8 @@
       <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
       <ExceptionHandling>Async</ExceptionHandling>
       <EnablePREfast>true</EnablePREfast>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\Common\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);OneCoreUAP.lib;avrt.lib</AdditionalDependencies>
@@ -243,6 +254,9 @@
       <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
       <ExceptionHandling>Async</ExceptionHandling>
       <EnablePREfast>true</EnablePREfast>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\Common\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>IDDCX_VERSION_MAJOR=1;IDDCX_VERSION_MINOR=4;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);OneCoreUAP.lib;avrt.lib</AdditionalDependencies>

@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "VDD Panel (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "VDD Panel (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}

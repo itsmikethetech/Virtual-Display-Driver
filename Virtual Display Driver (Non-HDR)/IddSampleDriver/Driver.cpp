@@ -22,6 +22,7 @@ Environment:
 #include<string>
 #include<tuple>
 #include<vector>
+#include <AdapterOption.h>
 
 using namespace std;
 using namespace Microsoft::IndirectDisp;
@@ -42,6 +43,10 @@ EVT_IDD_CX_MONITOR_QUERY_TARGET_MODES IddSampleMonitorQueryModes;
 EVT_IDD_CX_MONITOR_ASSIGN_SWAPCHAIN IddSampleMonitorAssignSwapChain;
 EVT_IDD_CX_MONITOR_UNASSIGN_SWAPCHAIN IddSampleMonitorUnassignSwapChain;
 
+struct
+{
+    AdapterOption Adapter;
+} Options;
 vector<tuple<int, int, int>> monitorModes;
 vector< DISPLAYCONFIG_VIDEO_SIGNAL_INFO> s_KnownMonitorModes2;
 UINT numVirtualDisplays;
@@ -133,6 +138,7 @@ void loadOptions(string filepath) {
         monitorModes = res; return;
     }
 }
+
 _Use_decl_annotations_
 NTSTATUS IddSampleDeviceAdd(WDFDRIVER Driver, PWDFDEVICE_INIT pDeviceInit)
 {
@@ -152,7 +158,9 @@ NTSTATUS IddSampleDeviceAdd(WDFDRIVER Driver, PWDFDEVICE_INIT pDeviceInit)
     // If the driver wishes to handle custom IoDeviceControl requests, it's necessary to use this callback since IddCx
     // redirects IoDeviceControl requests to an internal queue. This sample does not need this.
     // IddConfig.EvtIddCxDeviceIoControl = IddSampleIoDeviceControl;
+
     loadOptions("C:\\IddSampleDriver\\option.txt");
+    Options.Adapter.load("C:\\IddSampleDriver\\adapter.txt");
     IddConfig.EvtIddCxAdapterInitFinished = IddSampleAdapterInitFinished;
 
     IddConfig.EvtIddCxParseMonitorDescription = IddSampleParseMonitorDescription;
@@ -237,6 +245,19 @@ HRESULT Direct3DDevice::Init()
     {
         return hr;
     }
+
+#if 0 // Test code
+    {
+        FILE* file;
+        fopen_s(&file, "C:\\IddSampleDriver\\desc.bin", "wb");
+
+        DXGI_ADAPTER_DESC desc;
+        Adapter->GetDesc(&desc);
+
+        fwrite(&desc, 1, sizeof(desc), file);
+        fclose(file);
+    }
+#endif
 
     // Create a D3D device using the render adapter. BGRA support is required by the WHQL test suite.
     hr = D3D11CreateDevice(Adapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT, nullptr, 0, D3D11_SDK_VERSION, &Device, nullptr, &DeviceContext);
@@ -499,6 +520,7 @@ void IndirectDeviceContext::InitAdapter()
 
 void IndirectDeviceContext::FinishInit()
 {
+    Options.Adapter.apply(m_Adapter);
     for (unsigned int i = 0; i < numVirtualDisplays; i++) {
         CreateMonitor(i);
     }
