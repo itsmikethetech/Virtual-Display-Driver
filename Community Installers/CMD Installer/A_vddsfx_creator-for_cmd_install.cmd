@@ -46,4 +46,14 @@ cp %fullpath%\%scripts%\*.*  %startpath%\ziptemp\scripts
 cd %startpath%\ziptemp
 :: will create a 7zip zfx that you can install on other computers with the insatll script
 "c:\Program Files\7-Zip\7z.exe" a -r -sfx -t7z %startpath%\mttvdd_win%wos%.exe *
+goto eof
 
+:usage
+@echo Usage: %0 ^<path to local git-repo^> ^<D or R^>  ^<10 or 11^>
+@echo "1. d:\git\vdd"
+@echo "2. D for the last debug compile / R for last release compile"
+@echo "3. 10 for NON-HDR compile or 11 for a HDR compile"
+exit /B 1
+
+:eof
+Echo Thank you
