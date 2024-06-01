@@ -34,6 +34,7 @@ md %startpath%\ziptemp\scripts
 cd %fullpath%
 
 :: copy the driver files and other stuff into a temporary fodler for zipping
+cp %osdir%\%kind%\options.txt %startpath%\ziptemp
 cp %osdir%\%kind%\IddSampleDriver\* %startpath%\ziptemp
 cp %osdir%\%kind%\IddSampleDriver.cer %startpath%\ziptemp
 cp %fullpath%\%util%\util\installCert.bat %startpath%\ziptemp
