@@ -38,7 +38,7 @@ cp %osdir%\%kind%\IddSampleDriver\* %startpath%\ziptemp
 cp %osdir%\%kind%\IddSampleDriver.cer %startpath%\ziptemp
 cp %fullpath%\%util%\util\installCert.bat %startpath%\ziptemp
 cp %fullpath%\%util%\util\onoff_at_loginout %startpath%\ziptemp
-cp %fullpath%\%util%\bin\vddcon.exe %startpath%\ziptemp\bin
+cp %fullpath%\%util%\tool\vddcon.exe.rename %startpath%\ziptemp\bin\vddcon.exe
 cp %fullpath%\%scripts%\*.*  %startpath%\ziptemp\scripts
 
 %sdrive%
