@@ -35,7 +35,7 @@ setx IDD_SAMPLE_DRIVER_CONFIG %fullpath% /m
 cd %fullpath%
 
 :: unzipping the 7zip-sfx that contains, driver, cert, scripts and needed files for propper CLI based installation.
-START /B /WAIT cmd /c "%startpath%\mtt-vdd-gpu11.exe -o%fullpath% -y"
+START /B /WAIT cmd /c "%startpath%\mttvdd_win11.exe -o%fullpath% -y"
 
 :: Install certificate
 call .\installCert.bat
