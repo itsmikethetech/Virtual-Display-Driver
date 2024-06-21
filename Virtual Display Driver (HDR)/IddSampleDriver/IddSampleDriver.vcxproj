@@ -45,7 +45,7 @@
     <ClInclude Include="Trace.h" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="IddSampleDriver.inf" />
+    <Inf Include="VDD.inf" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2D54CB75-8B17-4F11-97DC-847B0244CD46}</ProjectGuid>
@@ -54,7 +54,8 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <RootNamespace>IddSampleDriver</RootNamespace>
+    <RootNamespace>VirtualDisplayDriver</RootNamespace>
+    <ProjectName>VDD</ProjectName>
   </PropertyGroup>
   <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PlatformToolset>WindowsUserModeDriver10.0</PlatformToolset>
