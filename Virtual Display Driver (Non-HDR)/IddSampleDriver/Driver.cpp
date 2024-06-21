@@ -47,7 +47,7 @@ struct
 {
     AdapterOption Adapter;
 } Options;
-vector<tuple<int, int, int>> monitorModes;
+vector<tuple<int, int, int, int>> monitorModes;
 vector< DISPLAYCONFIG_VIDEO_SIGNAL_INFO> s_KnownMonitorModes2;
 UINT numVirtualDisplays;
 
@@ -116,13 +116,15 @@ void loadOptions(string filepath) {
     ifstream ifs(filepath);
 
     string line;
-    vector<tuple<int, int, int>> res;
+    vector<tuple<int, int, int, int>> res;
     getline(ifs, line);//num of displays
     numVirtualDisplays = stoi(line);
     while (getline(ifs, line)) {
         vector<string> strvec = split(line, ',');
-        if (strvec.size() == 3 && strvec[0].substr(0, 1) != "#") {
-            res.push_back({ stoi(strvec[0]),stoi(strvec[1]),stoi(strvec[2]) });
+        if (strvec.size() >= 3 && strvec[0].substr(0, 1) != "#") {
+            // Assume refresh rate denominator is 1 if not present
+            int den = strvec.size() == 3 ? 1 : stoi(strvec[3]);
+            res.push_back({ stoi(strvec[0]),stoi(strvec[1]),stoi(strvec[2]),den });
         }
     }
     monitorModes = res; return;
@@ -407,8 +409,8 @@ void SwapChainProcessor::RunCore()
 const UINT64 MHZ = 1000000;
 const UINT64 KHZ = 1000;
 
-constexpr DISPLAYCONFIG_VIDEO_SIGNAL_INFO dispinfo(UINT32 h, UINT32 v, UINT32 r) {
-    const UINT32 clock_rate = r * (v + 4) * (v + 4) + 1000;
+constexpr DISPLAYCONFIG_VIDEO_SIGNAL_INFO dispinfo(UINT32 h, UINT32 v, UINT32 rn, UINT32 rd) {
+    const UINT32 clock_rate = rn * (v + 4) * (v + 4) / rd + 1000;
     return {
       clock_rate,                                      // pixel clock rate [Hz]
     { clock_rate, v + 4 },                         // fractional horizontal refresh rate [Hz]
@@ -636,7 +638,7 @@ NTSTATUS IddSampleParseMonitorDescription(const IDARG_IN_PARSEMONITORDESCRIPTION
     // ==============================
 
     for (int i = 0; i < monitorModes.size(); i++) {
-        s_KnownMonitorModes2.push_back(dispinfo(std::get<0>(monitorModes[i]), std::get<1>(monitorModes[i]), std::get<2>(monitorModes[i])));
+        s_KnownMonitorModes2.push_back(dispinfo(std::get<0>(monitorModes[i]), std::get<1>(monitorModes[i]), std::get<2>(monitorModes[i]), std::get<3>(monitorModes[i])));
     }
     pOutArgs->MonitorModeBufferOutputCount = (UINT)monitorModes.size();
 
@@ -684,23 +686,24 @@ NTSTATUS IddSampleMonitorGetDefaultModes(IDDCX_MONITOR MonitorObject, const IDAR
 /// <summary>
 /// Creates a target mode from the fundamental mode attributes.
 /// </summary>
-void CreateTargetMode(DISPLAYCONFIG_VIDEO_SIGNAL_INFO& Mode, UINT Width, UINT Height, UINT VSync)
+void CreateTargetMode(DISPLAYCONFIG_VIDEO_SIGNAL_INFO& Mode, UINT Width, UINT Height, UINT VSyncNum, UINT VSyncDen)
 {
     Mode.totalSize.cx = Mode.activeSize.cx = Width;
     Mode.totalSize.cy = Mode.activeSize.cy = Height;
     Mode.AdditionalSignalInfo.vSyncFreqDivider = 1;
     Mode.AdditionalSignalInfo.videoStandard = 255;
-    Mode.vSyncFreq.Numerator = VSync;
-    Mode.vSyncFreq.Denominator = Mode.hSyncFreq.Denominator = 1;
-    Mode.hSyncFreq.Numerator = VSync * Height;
+    Mode.vSyncFreq.Numerator = VSyncNum;
+    Mode.vSyncFreq.Denominator = VSyncDen;
+    Mode.hSyncFreq.Numerator = VSyncNum * Height;
+    Mode.hSyncFreq.Denominator = VSyncDen;
     Mode.scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-    Mode.pixelRate = VSync * Width * Height;
+    Mode.pixelRate = VSyncNum * Width * Height / VSyncDen;
 }
 
-void CreateTargetMode(IDDCX_TARGET_MODE& Mode, UINT Width, UINT Height, UINT VSync)
+void CreateTargetMode(IDDCX_TARGET_MODE& Mode, UINT Width, UINT Height, UINT VSyncNum, UINT VSyncDen)
 {
     Mode.Size = sizeof(Mode);
-    CreateTargetMode(Mode.TargetVideoSignalInfo.targetVideoSignalInfo, Width, Height, VSync);
+    CreateTargetMode(Mode.TargetVideoSignalInfo.targetVideoSignalInfo, Width, Height, VSyncNum, VSyncDen);
 }
 
 _Use_decl_annotations_
@@ -715,7 +718,7 @@ NTSTATUS IddSampleMonitorQueryModes(IDDCX_MONITOR MonitorObject, const IDARG_IN_
     // report the available set of modes for a given output as the intersection of monitor modes with target modes.
 
     for (int i = 0; i < monitorModes.size(); i++) {
-        CreateTargetMode(TargetModes[i], std::get<0>(monitorModes[i]), std::get<1>(monitorModes[i]), std::get<2>(monitorModes[i]));
+        CreateTargetMode(TargetModes[i], std::get<0>(monitorModes[i]), std::get<1>(monitorModes[i]), std::get<2>(monitorModes[i]), std::get<3>(monitorModes[i]));
     }
 
     pOutArgs->TargetModeBufferOutputCount = (UINT)TargetModes.size();
