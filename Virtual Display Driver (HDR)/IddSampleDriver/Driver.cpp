@@ -23,6 +23,14 @@ Environment:
 #include<tuple>
 #include<vector>
 #include <AdapterOption.h>
+#include <xmllite.h>
+#include <shlwapi.h>
+#include <atlbase.h>
+#include <iostream>
+
+
+#pragma comment(lib, "xmllite.lib")
+#pragma comment(lib, "shlwapi.lib")
 
 using namespace std;
 using namespace Microsoft::IndirectDisp;
@@ -120,7 +128,71 @@ vector<string> split(string& input, char delimiter)
 	return result;
 }
 
-void loadOptions(string filepath) {
+void ReadXml(const std::wstring& filename, std::vector<std::tuple<std::int_fast16_t, std::int_fast16_t, std::int_fast16_t>> res, std::wstring gpuFriendlyName, int monitorcount) {
+	CComPtr<IStream> pStream;
+	CComPtr<IXmlReader> pReader;
+	HRESULT hr = SHCreateStreamOnFileW(filename.c_str(), STGM_READ, &pStream);
+		if (FAILED(hr)) {
+			std::wcout << L"Failed to create file stream. HRESULT: " << hr << std::endl;
+			return;
+		}
+
+		hr = CreateXmlReader(__uuidof(IXmlReader), (void**)&pReader, NULL);
+		if (FAILED(hr)) {
+			std::wcout << L"Failed to create XmlReader. HRESULT: " << hr << std::endl;
+			return;
+		}
+
+		hr = pReader->SetInput(pStream);
+		if (FAILED(hr)) {
+			std::wcout << L"Failed to set input stream. HRESULT: " << hr << std::endl;
+			return;
+		}
+
+	XmlNodeType nodeType;
+	const WCHAR* pwszLocalName;
+	const WCHAR* pwszValue;
+	UINT cwchLocalName;
+	UINT cwchValue;
+	std::wstring currentElement;
+	std::wstring width, height, refreshRate;
+
+		while (S_OK == (hr = pReader->Read(&nodeType))) {
+			switch (nodeType) {
+			case XmlNodeType_Element:
+				hr = pReader->GetLocalName(&pwszLocalName, &cwchLocalName);
+				if (FAILED(hr)) {
+					std::wcout << L"Failed to get local name. HRESULT: " << hr << std::endl;
+					return;
+				}
+				currentElement = std::wstring(pwszLocalName, cwchLocalName);
+				break;
+			case XmlNodeType_Text:
+				hr = pReader->GetValue(&pwszValue, &cwchValue);
+				if (FAILED(hr)) {
+					std::wcout << L"Failed to get value. HRESULT: " << hr << std::endl;
+					return;
+				}
+				if (currentElement == L"count") {
+					monitorcount = std::stoi(std::wstring(pwszValue, cwchValue));
+				}
+				else if (currentElement == L"width") {
+					width = std::wstring(pwszValue, cwchValue);
+				}
+				else if (currentElement == L"height") {
+					height = std::wstring(pwszValue, cwchValue);
+				}
+				else if (currentElement == L"refresh_rate") {
+					refreshRate = std::wstring(pwszValue, cwchValue);
+					res.push_back(std::make_tuple(stoi(width), stoi(height), stoi(refreshRate)));
+				}
+				break;
+			}
+		}
+		return;
+}
+
+void loadOptions(string filepath){
 	ifstream ifs(filepath);
 	if (ifs.is_open()) {
 		string line;
@@ -191,9 +263,17 @@ NTSTATUS IddSampleDeviceAdd(WDFDRIVER Driver, PWDFDEVICE_INIT pDeviceInit)
 	// If the driver wishes to handle custom IoDeviceControl requests, it's necessary to use this callback since IddCx
 	// redirects IoDeviceControl requests to an internal queue. This sample does not need this.
 	// IddConfig.EvtIddCxDeviceIoControl = IddSampleIoDeviceControl;
-	loadOptions("C:\\IddSampleDriver\\option.txt");
-	Options.Adapter.load("C:\\IddSampleDriver\\adapter.txt");
-
+	std::wstring targetname;
+	ReadXml(L"vdd_settings.xml", monitorModes, targetname, numVirtualDisplays);
+	if (monitorModes.empty()) {
+		loadOptions("C:\\IddSampleDriver\\option.txt");
+	}
+	if (targetname.empty()) {
+		Options.Adapter.load("C:\\IddSampleDriver\\adapter.txt");
+	}
+	else {
+		Options.Adapter.xmlprovide(targetname);
+	}
 	IddConfig.EvtIddCxAdapterInitFinished = IddSampleAdapterInitFinished;
 
 	IddConfig.EvtIddCxMonitorGetDefaultDescriptionModes = IddSampleMonitorGetDefaultModes;

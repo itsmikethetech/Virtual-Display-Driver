@@ -106,6 +106,37 @@ struct AdapterOption {
         return target_name;
     }
 
+    void xmlprovide(wstring xtarg) {
+        target_name = xtarg;
+        ComPtr<IDXGIFactory1> factory{};
+        if (!SUCCEEDED(CreateDXGIFactory1(IID_PPV_ARGS(&factory)))) {
+            return;
+        }
+
+        for (UINT i = 0;; i++) {
+            ComPtr<IDXGIAdapter> adapter{};
+            if (!SUCCEEDED(factory->EnumAdapters(i, &adapter))) {
+                break;
+            }
+
+            DXGI_ADAPTER_DESC desc;
+            if (!SUCCEEDED(adapter->GetDesc(&desc))) {
+                continue;
+            }
+
+            if (_wcsicmp(target_name.c_str(), desc.Description) == 0) {
+                adapterLuid = desc.AdapterLuid;
+                hasTargetAdapter = true;
+                return;
+            }
+        }
+
+        if (!hasTargetAdapter) {
+            target_name = selectBestGPU();
+        }
+
+    }
+
     void apply(const IDDCX_ADAPTER& adapter) {
         if (hasTargetAdapter) {
             if (IDD_IS_FUNCTION_AVAILABLE(IddCxAdapterSetRenderAdapter)) {

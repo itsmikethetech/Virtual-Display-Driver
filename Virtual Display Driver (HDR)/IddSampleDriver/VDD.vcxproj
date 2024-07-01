@@ -54,7 +54,7 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-    <RootNamespace>VirtualDisplayDriver</RootNamespace>
+    <RootNamespace>MTT1337</RootNamespace>
     <ProjectName>VDD</ProjectName>
   </PropertyGroup>
   <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
