@@ -66,6 +66,7 @@ struct
 vector<tuple<int, int, int>> monitorModes;
 vector< DISPLAYCONFIG_VIDEO_SIGNAL_INFO> s_KnownMonitorModes2;
 UINT numVirtualDisplays;
+wstring gpuname;
 
 struct IndirectDeviceContextWrapper
 {
@@ -128,34 +129,39 @@ vector<string> split(string& input, char delimiter)
 	return result;
 }
 
-void ReadXml(const std::wstring& filename, std::vector<std::tuple<std::int_fast16_t, std::int_fast16_t, std::int_fast16_t>> res, std::wstring gpuFriendlyName, int monitorcount) {
-	CComPtr<IStream> pStream;
-	CComPtr<IXmlReader> pReader;
-	HRESULT hr = SHCreateStreamOnFileW(filename.c_str(), STGM_READ, &pStream);
-		if (FAILED(hr)) {
-			std::wcout << L"Failed to create file stream. HRESULT: " << hr << std::endl;
-			return;
-		}
+void loadSettings(){
+	// Check if the file exists
+	const std::wstring& filename = L"C:\\IddSampleDriver\\vdd_settings.xml";
+	if (PathFileExistsW(filename.c_str())) {
+		CComPtr<IStream> pStream;
+		CComPtr<IXmlReader> pReader;
+		HRESULT hr = SHCreateStreamOnFileW(filename.c_str(), STGM_READ, &pStream);
+			// Indented just because it's over eager fault tollerance
+			if (FAILED(hr)) {
+				std::wcout << L"Failed to create file stream. HRESULT: " << hr << std::endl;
+				return;
+			}
+			hr = CreateXmlReader(__uuidof(IXmlReader), (void**)&pReader, NULL);
+			if (FAILED(hr)) {
+				std::wcout << L"Failed to create XmlReader. HRESULT: " << hr << std::endl;
+				return;
+			}
+			hr = pReader->SetInput(pStream);
+			if (FAILED(hr)) {
+				std::wcout << L"Failed to set input stream. HRESULT: " << hr << std::endl;
+				return;
+			}
 
-		hr = CreateXmlReader(__uuidof(IXmlReader), (void**)&pReader, NULL);
-		if (FAILED(hr)) {
-			std::wcout << L"Failed to create XmlReader. HRESULT: " << hr << std::endl;
-			return;
-		}
-
-		hr = pReader->SetInput(pStream);
-		if (FAILED(hr)) {
-			std::wcout << L"Failed to set input stream. HRESULT: " << hr << std::endl;
-			return;
-		}
-
-	XmlNodeType nodeType;
-	const WCHAR* pwszLocalName;
-	const WCHAR* pwszValue;
-	UINT cwchLocalName;
-	UINT cwchValue;
-	std::wstring currentElement;
-	std::wstring width, height, refreshRate;
+		XmlNodeType nodeType;
+		const WCHAR* pwszLocalName;
+		const WCHAR* pwszValue;
+		UINT cwchLocalName;
+		UINT cwchValue;
+		std::wstring currentElement;
+		std::wstring width, height, refreshRate;
+		std::vector<std::tuple<std::int_fast16_t, std::int_fast16_t, std::int_fast16_t>> res;
+		std::wstring gpuFriendlyName;
+		UINT monitorcount = 1;
 
 		while (S_OK == (hr = pReader->Read(&nodeType))) {
 			switch (nodeType) {
@@ -176,6 +182,9 @@ void ReadXml(const std::wstring& filename, std::vector<std::tuple<std::int_fast1
 				if (currentElement == L"count") {
 					monitorcount = std::stoi(std::wstring(pwszValue, cwchValue));
 				}
+				else if (currentElement == L"friendlyname") {
+					gpuFriendlyName = std::wstring(pwszValue, cwchValue);
+				}
 				else if (currentElement == L"width") {
 					width = std::wstring(pwszValue, cwchValue);
 				}
@@ -189,11 +198,12 @@ void ReadXml(const std::wstring& filename, std::vector<std::tuple<std::int_fast1
 				break;
 			}
 		}
+		numVirtualDisplays = monitorcount;
+		gpuname = gpuFriendlyName;
+		monitorModes = res;
 		return;
-}
-
-void loadOptions(string filepath){
-	ifstream ifs(filepath);
+	}
+	ifstream ifs("C:\\IddSampleDriver\\option.txt");
 	if (ifs.is_open()) {
 		string line;
 		vector<tuple<int, int, int>> res;
@@ -233,7 +243,7 @@ void loadOptions(string filepath){
 			make_tuple(1280, 720, 30),
 			make_tuple(1280, 720, 60),
 			make_tuple(1280, 720, 90),
-			make_tuple(1280, 720, 230),
+			make_tuple(1280, 720, 130),
 			make_tuple(1280, 720, 144),
 			make_tuple(800, 600, 30),
 			make_tuple(800, 600, 60),
@@ -263,16 +273,12 @@ NTSTATUS IddSampleDeviceAdd(WDFDRIVER Driver, PWDFDEVICE_INIT pDeviceInit)
 	// If the driver wishes to handle custom IoDeviceControl requests, it's necessary to use this callback since IddCx
 	// redirects IoDeviceControl requests to an internal queue. This sample does not need this.
 	// IddConfig.EvtIddCxDeviceIoControl = IddSampleIoDeviceControl;
-	std::wstring targetname;
-	ReadXml(L"vdd_settings.xml", monitorModes, targetname, numVirtualDisplays);
-	if (monitorModes.empty()) {
-		loadOptions("C:\\IddSampleDriver\\option.txt");
-	}
-	if (targetname.empty()) {
+	loadSettings();
+	if (gpuname.empty()) {
 		Options.Adapter.load("C:\\IddSampleDriver\\adapter.txt");
 	}
 	else {
-		Options.Adapter.xmlprovide(targetname);
+		Options.Adapter.xmlprovide(gpuname);
 	}
 	IddConfig.EvtIddCxAdapterInitFinished = IddSampleAdapterInitFinished;
 
