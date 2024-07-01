@@ -19,7 +19,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="IddSampleDriver.inf">
+    <Inf Include="VDD.inf">
       <Filter>Driver Files</Filter>
     </Inf>
   </ItemGroup>
