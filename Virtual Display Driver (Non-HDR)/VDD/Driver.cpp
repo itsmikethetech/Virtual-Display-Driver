@@ -16,13 +16,20 @@ Environment:
 --*/
 
 #include "Driver.h"
-#include "Driver.tmh"
+//#include "Driver.tmh"
 #include<fstream>
 #include<sstream>
 #include<string>
 #include<tuple>
 #include<vector>
 #include <AdapterOption.h>
+#include <xmllite.h>
+#include <shlwapi.h>
+#include <atlbase.h>
+#include <iostream>
+
+#pragma comment(lib, "xmllite.lib")
+#pragma comment(lib, "shlwapi.lib")
 
 using namespace std;
 using namespace Microsoft::IndirectDisp;
@@ -50,6 +57,7 @@ struct
 vector<tuple<int, int, int>> monitorModes;
 vector< DISPLAYCONFIG_VIDEO_SIGNAL_INFO> s_KnownMonitorModes2;
 UINT numVirtualDisplays;
+wstring gpuname;
 
 struct IndirectDeviceContextWrapper
 {
@@ -112,8 +120,81 @@ vector<string> split(string& input, char delimiter)
     return result;
 }
 
-void loadOptions(string filepath) {
-    ifstream ifs(filepath);
+void loadSettings() {
+    // Check if the file exists
+    const std::wstring& filename = L"C:\\IddSampleDriver\\vdd_settings.xml";
+    if (PathFileExistsW(filename.c_str())) {
+        CComPtr<IStream> pStream;
+        CComPtr<IXmlReader> pReader;
+        HRESULT hr = SHCreateStreamOnFileW(filename.c_str(), STGM_READ, &pStream);
+        // Indented just because it's over eager fault tollerance
+        if (FAILED(hr)) {
+            std::wcout << L"Failed to create file stream. HRESULT: " << hr << std::endl;
+            return;
+        }
+        hr = CreateXmlReader(__uuidof(IXmlReader), (void**)&pReader, NULL);
+        if (FAILED(hr)) {
+            std::wcout << L"Failed to create XmlReader. HRESULT: " << hr << std::endl;
+            return;
+        }
+        hr = pReader->SetInput(pStream);
+        if (FAILED(hr)) {
+            std::wcout << L"Failed to set input stream. HRESULT: " << hr << std::endl;
+            return;
+        }
+
+        XmlNodeType nodeType;
+        const WCHAR* pwszLocalName;
+        const WCHAR* pwszValue;
+        UINT cwchLocalName;
+        UINT cwchValue;
+        std::wstring currentElement;
+        std::wstring width, height, refreshRate;
+        std::vector<std::tuple<std::int_fast16_t, std::int_fast16_t, std::int_fast16_t>> res;
+        std::wstring gpuFriendlyName;
+        UINT monitorcount = 1;
+
+        while (S_OK == (hr = pReader->Read(&nodeType))) {
+            switch (nodeType) {
+            case XmlNodeType_Element:
+                hr = pReader->GetLocalName(&pwszLocalName, &cwchLocalName);
+                if (FAILED(hr)) {
+                    std::wcout << L"Failed to get local name. HRESULT: " << hr << std::endl;
+                    return;
+                }
+                currentElement = std::wstring(pwszLocalName, cwchLocalName);
+                break;
+            case XmlNodeType_Text:
+                hr = pReader->GetValue(&pwszValue, &cwchValue);
+                if (FAILED(hr)) {
+                    std::wcout << L"Failed to get value. HRESULT: " << hr << std::endl;
+                    return;
+                }
+                if (currentElement == L"count") {
+                    monitorcount = std::stoi(std::wstring(pwszValue, cwchValue));
+                }
+                else if (currentElement == L"friendlyname") {
+                    gpuFriendlyName = std::wstring(pwszValue, cwchValue);
+                }
+                else if (currentElement == L"width") {
+                    width = std::wstring(pwszValue, cwchValue);
+                }
+                else if (currentElement == L"height") {
+                    height = std::wstring(pwszValue, cwchValue);
+                }
+                else if (currentElement == L"refresh_rate") {
+                    refreshRate = std::wstring(pwszValue, cwchValue);
+                    res.push_back(std::make_tuple(stoi(width), stoi(height), stoi(refreshRate)));
+                }
+                break;
+            }
+        }
+        numVirtualDisplays = monitorcount;
+        gpuname = gpuFriendlyName;
+        monitorModes = res;
+        return;
+    }
+    ifstream ifs("C:\\IddSampleDriver\\option.txt");
     if (ifs.is_open()) {
         string line;
         vector<tuple<int, int, int>> res;
@@ -130,10 +211,36 @@ void loadOptions(string filepath) {
     else {
         numVirtualDisplays = 1;
         vector<tuple<int, int, int>> res = {
+            make_tuple(3840, 2160, 30),
+            make_tuple(3840, 2160, 60),
+            make_tuple(3840, 2160, 90),
+            make_tuple(3840, 2160, 120),
+            make_tuple(3840, 2160, 144),
+            make_tuple(2560, 1440, 30),
+            make_tuple(2560, 1440, 60),
+            make_tuple(2560, 1440, 90),
+            make_tuple(2560, 1440, 120),
+            make_tuple(2560, 1440, 144),
+            make_tuple(1920, 1080, 30),
             make_tuple(1920, 1080, 60),
+            make_tuple(1920, 1080, 90),
+            make_tuple(1920, 1080, 120),
+            make_tuple(1920, 1080, 144),
+            make_tuple(1366, 768, 30),
+            make_tuple(1366, 768, 60),
+            make_tuple(1366, 768, 90),
+            make_tuple(1366, 768, 120),
+            make_tuple(1366, 768, 144),
+            make_tuple(1280, 720, 30),
             make_tuple(1280, 720, 60),
+            make_tuple(1280, 720, 90),
+            make_tuple(1280, 720, 130),
+            make_tuple(1280, 720, 144),
+            make_tuple(800, 600, 30),
             make_tuple(800, 600, 60),
-            make_tuple(640,480,60)
+            make_tuple(800, 600, 90),
+            make_tuple(800, 600, 120),
+            make_tuple(800, 600, 144)
         };
         monitorModes = res; return;
     }
@@ -159,8 +266,13 @@ NTSTATUS IddSampleDeviceAdd(WDFDRIVER Driver, PWDFDEVICE_INIT pDeviceInit)
     // redirects IoDeviceControl requests to an internal queue. This sample does not need this.
     // IddConfig.EvtIddCxDeviceIoControl = IddSampleIoDeviceControl;
 
-    loadOptions("C:\\IddSampleDriver\\option.txt");
-    Options.Adapter.load("C:\\IddSampleDriver\\adapter.txt");
+    loadSettings();
+    if (gpuname.empty()) {
+        Options.Adapter.load("C:\\IddSampleDriver\\adapter.txt");
+    }
+    else {
+        Options.Adapter.xmlprovide(gpuname);
+    }
     IddConfig.EvtIddCxAdapterInitFinished = IddSampleAdapterInitFinished;
 
     IddConfig.EvtIddCxParseMonitorDescription = IddSampleParseMonitorDescription;
@@ -434,22 +546,14 @@ constexpr DISPLAYCONFIG_VIDEO_SIGNAL_INFO dispinfo(UINT32 h, UINT32 v, UINT32 r)
 // This is a sample monitor EDID - FOR SAMPLE PURPOSES ONLY
 const BYTE IndirectDeviceContext::s_KnownMonitorEdid[] =
 {
-    /*  0x00,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x79,0x5E,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA6,0x01,0x03,0x80,0x28,
-      0x1E,0x78,0x0A,0xEE,0x91,0xA3,0x54,0x4C,0x99,0x26,0x0F,0x50,0x54,0x20,0x00,0x00,0x01,0x01,0x01,0x01,0x01,0x01,
-      0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0xA0,0x0F,0x20,0x00,0x31,0x58,0x1C,0x20,0x28,0x80,0x14,0x00,
-      0x90,0x2C,0x11,0x00,0x00,0x1E,0x00,0x00,0x00,0x10,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-      0x00,0x00,0x00,0x00,0x00,0x10,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-      0x00,0x10,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x6E */
-
-      0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x31, 0xD8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      0x05, 0x16, 0x01, 0x03, 0x6D, 0x32, 0x1C, 0x78, 0xEA, 0x5E, 0xC0, 0xA4, 0x59, 0x4A, 0x98, 0x25,
-      0x20, 0x50, 0x54, 0x00, 0x00, 0x00, 0xD1, 0xC0, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-      0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x3A, 0x80, 0x18, 0x71, 0x38, 0x2D, 0x40, 0x58, 0x2C,
-      0x45, 0x00, 0xF4, 0x19, 0x11, 0x00, 0x00, 0x1E, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x4C, 0x69, 0x6E,
-      0x75, 0x78, 0x20, 0x23, 0x30, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x00, 0x00, 0x00, 0xFD, 0x00, 0x3B,
-      0x3D, 0x42, 0x44, 0x0F, 0x00, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x00, 0x00, 0x00, 0xFC,
-      0x00, 0x4C, 0x69, 0x6E, 0x75, 0x78, 0x20, 0x46, 0x48, 0x44, 0x0A, 0x20, 0x20, 0x20, 0x00, 0x05
-
+0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x36, 0x94, 0x37, 0x13, 0x31, 0x73, 0x37, 0x01,
+0x19, 0x22, 0x01, 0x03, 0x80, 0x32, 0x1f, 0x78, 0x07, 0xee, 0x95, 0xa3, 0x54, 0x4c, 0x99, 0x26,
+0x0f, 0x50, 0x54, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x08, 0xe8, 0x00, 0x30, 0xf2, 0x70, 0x5a, 0x80, 0xb0, 0x58,
+0x8a, 0x00, 0x80, 0x88, 0x42, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0xfd, 0x00, 0x17, 0xf0, 0x0f,
+0xff, 0x37, 0x00, 0x0a, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x00, 0x00, 0x00, 0x10, 0x00, 0x56,
+0x44, 0x44, 0x62, 0x79, 0x4d, 0x54, 0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x2e
 };
 
 IndirectDeviceContext::IndirectDeviceContext(_In_ WDFDEVICE WdfDevice) :
