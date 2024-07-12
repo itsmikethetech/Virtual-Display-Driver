@@ -129,38 +129,33 @@ vector<string> split(string& input, char delimiter)
 	return result;
 }
 
-void loadSettings(){
-	// Check if the file exists
+void loadSettings() {
 	const std::wstring& filename = L"C:\\IddSampleDriver\\vdd_settings.xml";
 	if (PathFileExistsW(filename.c_str())) {
 		CComPtr<IStream> pStream;
 		CComPtr<IXmlReader> pReader;
 		HRESULT hr = SHCreateStreamOnFileW(filename.c_str(), STGM_READ, &pStream);
-			// Indented just because it's over eager fault tollerance
-			if (FAILED(hr)) {
-				std::wcout << L"Failed to create file stream. HRESULT: " << hr << std::endl;
-				return;
-			}
-			hr = CreateXmlReader(__uuidof(IXmlReader), (void**)&pReader, NULL);
-			if (FAILED(hr)) {
-				std::wcout << L"Failed to create XmlReader. HRESULT: " << hr << std::endl;
-				return;
-			}
-			hr = pReader->SetInput(pStream);
-			if (FAILED(hr)) {
-				std::wcout << L"Failed to set input stream. HRESULT: " << hr << std::endl;
-				return;
-			}
+		if (FAILED(hr)) {
+			return; //Failed to create file stream.
+		}
+		hr = CreateXmlReader(__uuidof(IXmlReader), (void**)&pReader, NULL);
+		if (FAILED(hr)) {
+			return;//Failed to create XmlReader.
+		}
+		hr = pReader->SetInput(pStream);
+		if (FAILED(hr)) {
+			return;//Failed to set input stream.
+		}
 
 		XmlNodeType nodeType;
 		const WCHAR* pwszLocalName;
 		const WCHAR* pwszValue;
 		UINT cwchLocalName;
 		UINT cwchValue;
-		std::wstring currentElement;
-		std::wstring width, height, refreshRate;
-		std::vector<std::tuple<std::int_fast16_t, std::int_fast16_t, std::int_fast16_t>> res;
-		std::wstring gpuFriendlyName;
+		wstring currentElement;
+		wstring width, height, refreshRate;
+		vector<tuple<int, int, int>> res;
+		wstring gpuFriendlyName;
 		UINT monitorcount = 1;
 
 		while (S_OK == (hr = pReader->Read(&nodeType))) {
@@ -168,36 +163,47 @@ void loadSettings(){
 			case XmlNodeType_Element:
 				hr = pReader->GetLocalName(&pwszLocalName, &cwchLocalName);
 				if (FAILED(hr)) {
-					std::wcout << L"Failed to get local name. HRESULT: " << hr << std::endl;
 					return;
 				}
-				currentElement = std::wstring(pwszLocalName, cwchLocalName);
+				currentElement = wstring(pwszLocalName, cwchLocalName);
 				break;
 			case XmlNodeType_Text:
 				hr = pReader->GetValue(&pwszValue, &cwchValue);
 				if (FAILED(hr)) {
-					std::wcout << L"Failed to get value. HRESULT: " << hr << std::endl;
 					return;
 				}
 				if (currentElement == L"count") {
-					monitorcount = std::stoi(std::wstring(pwszValue, cwchValue));
+					monitorcount = stoi(wstring(pwszValue, cwchValue));
+					if (monitorcount == 0) {
+						monitorcount = 1; 
+					}
 				}
 				else if (currentElement == L"friendlyname") {
-					gpuFriendlyName = std::wstring(pwszValue, cwchValue);
+					gpuFriendlyName = wstring(pwszValue, cwchValue);
 				}
 				else if (currentElement == L"width") {
-					width = std::wstring(pwszValue, cwchValue);
+					width = wstring(pwszValue, cwchValue);
+					if (width.empty()) {
+						width = L"800"; 
+					}
 				}
 				else if (currentElement == L"height") {
-					height = std::wstring(pwszValue, cwchValue);
+					height = wstring(pwszValue, cwchValue);
+					if (height.empty()) {
+						height = L"600"; 
+					}
 				}
 				else if (currentElement == L"refresh_rate") {
-					refreshRate = std::wstring(pwszValue, cwchValue);
-					res.push_back(std::make_tuple(stoi(width), stoi(height), stoi(refreshRate)));
+					refreshRate = wstring(pwszValue, cwchValue);
+					if (refreshRate.empty()) {
+						refreshRate = L"30";
+					}
+					res.push_back(make_tuple(stoi(width), stoi(height), stoi(refreshRate)));
 				}
 				break;
 			}
 		}
+
 		numVirtualDisplays = monitorcount;
 		gpuname = gpuFriendlyName;
 		monitorModes = res;
@@ -207,7 +213,7 @@ void loadSettings(){
 	if (ifs.is_open()) {
 		string line;
 		vector<tuple<int, int, int>> res;
-		getline(ifs, line);//num of displays
+		getline(ifs, line);
 		numVirtualDisplays = stoi(line);
 		while (getline(ifs, line)) {
 			vector<string> strvec = split(line, ',');
