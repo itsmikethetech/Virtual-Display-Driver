@@ -114,18 +114,29 @@ vector<string> split(string& input, char delimiter)
 
 void loadOptions(string filepath) {
     ifstream ifs(filepath);
-
-    string line;
-    vector<tuple<int, int, int>> res;
-    getline(ifs, line);//num of displays
-    numVirtualDisplays = stoi(line);
-    while (getline(ifs, line)) {
-        vector<string> strvec = split(line, ',');
-        if (strvec.size() == 3 && strvec[0].substr(0, 1) != "#") {
-            res.push_back({ stoi(strvec[0]),stoi(strvec[1]),stoi(strvec[2]) });
+    if (ifs.is_open()) {
+        string line;
+        vector<tuple<int, int, int>> res;
+        getline(ifs, line);//num of displays
+        numVirtualDisplays = stoi(line);
+        while (getline(ifs, line)) {
+            vector<string> strvec = split(line, ',');
+            if (strvec.size() == 3 && strvec[0].substr(0, 1) != "#") {
+                res.push_back({ stoi(strvec[0]),stoi(strvec[1]),stoi(strvec[2]) });
+            }
         }
+        monitorModes = res; return;
     }
-    monitorModes = res; return;
+    else {
+        numVirtualDisplays = 1;
+        vector<tuple<int, int, int>> res = {
+            make_tuple(1920, 1080, 60),
+            make_tuple(1280, 720, 60),
+            make_tuple(800, 600, 60),
+            make_tuple(640,480,60)
+        };
+        monitorModes = res; return;
+    }
 }
 
 _Use_decl_annotations_
