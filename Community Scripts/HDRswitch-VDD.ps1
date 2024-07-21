@@ -22,7 +22,7 @@ import-module -name $dpth -InformationAction:Ignore -Verbose:$false -WarningActi
 $mpth = Get-Module -ListAvailable $moduleName2 | select path | Select-Object -ExpandProperty path
 import-module -name $mpth -InformationAction:Ignore -Verbose:$false -WarningAction:SilentlyContinue 
  
-$disp = Get-Monitor | Select-String -Pattern "LNX0000" | Select-Object LineNumber | Select-Object -ExpandProperty LineNumber
+$disp = Get-Monitor | Select-String -Pattern "MTT1337" | Select-Object LineNumber | Select-Object -ExpandProperty LineNumber
 $bpcc = Get-DisplayColorInfo -DisplayId $disp | Select-Object BitsPerColorChannel | Select-Object -ExpandProperty BitsPerColorChannel
  
 if ( $bpcc -is [int] ) {

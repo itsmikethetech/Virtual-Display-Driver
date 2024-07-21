@@ -27,7 +27,7 @@ import-module -name $mpth -InformationAction:Ignore -Verbose:$false -WarningActi
 $numArgs = $args.Count
 switch ($numArgs) {
 	0 { Write-Error "This script requires a scale 'reset' or an accepted percfentage value (100, 125, 150, 175, 200, 225, 250, 300, 350, 400, 450, 500) limited by the device max scale."; break }
-	1 { $disp = Get-Monitor | Select-String -Pattern "LNX0000" | Select-Object LineNumber | Select-Object -ExpandProperty LineNumber
+	1 { $disp = Get-Monitor | Select-String -Pattern "MTT1337" | Select-Object LineNumber | Select-Object -ExpandProperty LineNumber
 	    $maxscale = Get-DisplayScale -DisplayId $disp | Select-Object -ExpandProperty MaxScale
 		if ( $args[0] -is [int] ) {
 		    if ( $args[0] -le $maxscale -And $args[0] -ge 100 ) {

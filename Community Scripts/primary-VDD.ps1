@@ -22,5 +22,5 @@ $dpth = Get-Module -ListAvailable $moduleName1 | select path | Select-Object -Ex
 $mpth = Get-Module -ListAvailable $moduleName2 | select path | Select-Object -ExpandProperty path; import-module -name $mpth
 
  
-$disp = Get-Monitor | Select-String -Pattern "LNX0000" | Select-Object LineNumber | Select-Object -ExpandProperty LineNumber
+$disp = Get-Monitor | Select-String -Pattern "MTT1337" | Select-Object LineNumber | Select-Object -ExpandProperty LineNumber
 Set-DisplayPrimary -DisplayId $disp

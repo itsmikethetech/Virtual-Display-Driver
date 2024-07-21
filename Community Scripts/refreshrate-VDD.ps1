@@ -29,7 +29,7 @@ import-module -name $mpth -InformationAction:Ignore -Verbose:$false -WarningActi
 $numArgs = $args.Count
 switch ($numArgs) {
 	0 { Write-Error "This script requires a refreshrate above 59 or reset"; break }
-	1 { $disp = Get-Monitor | Select-String -Pattern "LNX0000" | Select-Object LineNumber | Select-Object -ExpandProperty LineNumber
+	1 { $disp = Get-Monitor | Select-String -Pattern "MTT1337" | Select-Object LineNumber | Select-Object -ExpandProperty LineNumber
 	    $rate = $args[0]
 		continue
 	}

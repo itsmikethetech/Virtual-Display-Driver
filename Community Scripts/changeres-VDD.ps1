@@ -28,7 +28,7 @@ $numArgs = $args.Count
 switch ($numArgs) {
 	0 { Write-Error "This script requires at least 2 arguments Xres Yres."; break }
 	1 { Write-Error "This script requires at least 2 arguments Xres Yres."; break }
-	2 { $disp = Get-Monitor | Select-String -Pattern "LNX0000" | Select-Object LineNumber | Select-Object -ExpandProperty LineNumber
+	2 { $disp = Get-Monitor | Select-String -Pattern "MTT1337" | Select-Object LineNumber | Select-Object -ExpandProperty LineNumber
 	    $vres = $args[0]
 		$hres = $args[1]
 		continue
