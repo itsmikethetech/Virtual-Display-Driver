@@ -27,6 +27,8 @@ Environment:
 #include <shlwapi.h>
 #include <atlbase.h>
 #include <iostream>
+#include <cstdlib>
+#include <windows.h>
 
 #pragma comment(lib, "xmllite.lib")
 #pragma comment(lib, "shlwapi.lib")
@@ -57,7 +59,9 @@ struct
 vector<tuple<int, int, int>> monitorModes;
 vector< DISPLAYCONFIG_VIDEO_SIGNAL_INFO> s_KnownMonitorModes2;
 UINT numVirtualDisplays;
-wstring gpuname;				
+wstring gpuname;	
+wstring confpath;
+			
 
 struct IndirectDeviceContextWrapper
 {
@@ -120,8 +124,21 @@ vector<string> split(string& input, char delimiter)
     return result;
 }
 
+bool initpath() {
+	wchar_t* env_p = nullptr;
+	size_t len = 0;
+	errno_t err = _wdupenv_s(&env_p, &len, L"VDDPATH");
+	if (err != 0 || env_p == nullptr) {
+		confpath = L"C:\\IddSampleDriver";
+	}
+	confpath = env_p;
+	free(env_p); // Free the allocated memory
+	return true;
+}
+
 void loadSettings() {
-    const std::wstring& filename = L"C:\\IddSampleDriver\\vdd_settings.xml";
+	const wstring settingsname = confpath + L"\\vdd_settings.xml";
+	const std::wstring & filename = settingsname;
     if (PathFileExistsW(filename.c_str())) {
         CComPtr<IStream> pStream;
         CComPtr<IXmlReader> pReader;
@@ -200,7 +217,8 @@ void loadSettings() {
         monitorModes = res;
         return;
     }
-    ifstream ifs("C:\\IddSampleDriver\\option.txt");
+	const wstring optionsname = confpath + L"\\option.txt";
+	ifstream ifs(optionsname);
     if (ifs.is_open()) {
         string line;
         vector<tuple<int, int, int>> res;
@@ -275,7 +293,8 @@ NTSTATUS IddSampleDeviceAdd(WDFDRIVER Driver, PWDFDEVICE_INIT pDeviceInit)
 
     loadSettings();
     if (gpuname.empty()) {
-        Options.Adapter.load("C:\\IddSampleDriver\\adapter.txt");
+		const wstring adaptername = confpath + L"\\adapter.txt";
+		Options.Adapter.load(adaptername.c_str());
     }
     else {
         Options.Adapter.xmlprovide(gpuname);

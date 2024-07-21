@@ -28,7 +28,7 @@ struct AdapterOption {
     LUID adapterLuid{};
     wstring target_name;
 
-    void load(const char* path) {
+    void load(const wchar_t* path) {
         ifstream ifs{ path };
 
         if (!ifs.is_open()) {
