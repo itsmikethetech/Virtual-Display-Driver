@@ -14,6 +14,7 @@ set "sdrive=%~d0"
 set "drive=%~d1"
 set "typ=%2"
 set "wos=%3"
+set "common=Common"
 set "util=Community Installers\CMD Installer\util"
 set "tool=Community Installers\CMD Installer\tool"
 set "scripts=Community Scripts"
@@ -46,15 +47,18 @@ md "%startpath%ziptemp\utils\onoff_at_loginout"
 :: changing workdir to git repo
 %drive%
 cd "%fullpath%"
+@echo "%fullpath%"
 
 :: copy the driver files and other stuff into a temporary folder for zipping
-copy "!osdir!\option.txt" "%startpath%ziptemp"
-copy "!osdir!\!kind!\IddSampleDriver\*" "%startpath%ziptemp"
-copy "!osdir!\!kind!\IddSampleDriver.cer" "%startpath%ziptemp"
-copy "%fullpath%\%util%\installCert.bat" "%startpath%ziptemp"
-copy "%fullpath%\%util%\onoff_at_loginout\*" "%startpath%ziptemp\utils\onoff_at_loginout"
+copy "!osdir!\option.txt" "%startpath%ziptemp\"
+copy "!common!\vdd_settings.xml" "%startpath%ziptemp\"
+copy "!common!\adapter.txt" "%startpath%ziptemp\"
+copy "!osdir!\!kind!\VDD\*" "%startpath%ziptemp\"
+copy "!osdir!\!kind!\VDD.cer" "%startpath%ziptemp\"
+copy "!common!\installCert.bat" "%startpath%ziptemp\"
+copy "%fullpath%\%scripts%\onoff_at_loginout\*" "%startpath%ziptemp\utils\onoff_at_loginout\"
 copy "%fullpath%\%tool%\vddcon.exe.rename" "%startpath%ziptemp\bin\vddcon.exe"
-copy "%fullpath%\%scripts%\*.*" "%startpath%ziptemp\scripts"
+copy "%fullpath%\%scripts%\*.*" "%startpath%ziptemp\scripts\"
 
 %sdrive%
 cd "%startpath%ziptemp"
