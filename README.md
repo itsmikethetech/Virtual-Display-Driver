@@ -11,8 +11,8 @@ This project uses the official Windows Indirect Display Driver combined with the
 - [Windows 11 23H2+ (HDR)](https://github.com/itsmikethetech/Virtual-Display-Driver/releases/tag/23.12.2HDR)
 
 ## Beta
-- [Windows 10 and 11 (no HDR)]() - Coming Soon, adds support for manual GPU switching.
-- [Windows 11 23H3+ (HDR)]() - Coming Soon, adds support for manual GPU switching.
+- Windows 10 and 11 (no HDR) - Coming Soon, adds support for manual GPU switching.
+- [Windows 11 23H3+ (HDR)](https://github.com/itsmikethetech/Virtual-Display-Driver/releases/tag/23.12.2HDR) - Adds support for manual GPU switching.
 - Source available now for personal builds. Thanks to Sajidur78 for the PR.
  
 ## Installation
