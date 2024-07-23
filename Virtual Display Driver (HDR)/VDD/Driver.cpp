@@ -135,15 +135,35 @@ vector<string> split(string& input, char delimiter)
 	return result;
 }
 
+
 bool initpath() {
-	wchar_t* env_p = nullptr;
-	size_t len = 0;
-	errno_t err = _wdupenv_s(&env_p, &len, L"VDDPATH");
-	if (err != 0 || env_p == nullptr) {
-		confpath = L"C:\\IddSampleDriver";
+	HKEY hKey;
+	wchar_t szPath[MAX_PATH];
+	DWORD dwBufferSize = sizeof(szPath);
+	LONG lResult;
+
+	// Open the registry key
+	lResult = RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\MikeTheTech\\VirtualDisplayDriver", 0, KEY_READ, &hKey);
+	if (lResult != ERROR_SUCCESS) {
+		wcerr << L"Failed to open registry key. Error code: " << lResult << endl;
+		confpath = L"C:\\IddSampleDriver"; // Default path if registry key not found
+		return false;
 	}
-	confpath = env_p;
-	free(env_p); // Free the allocated memory
+
+	// Query the value
+	lResult = RegQueryValueExW(hKey, L"VDDPATH", NULL, NULL, (LPBYTE)szPath, &dwBufferSize);
+	if (lResult != ERROR_SUCCESS) {
+		wcerr << L"Failed to read registry value. Error code: " << lResult << endl;
+		confpath = L"C:\\IddSampleDriver"; // Default path if registry value not found
+		RegCloseKey(hKey);
+		return false;
+	}
+
+	confpath = szPath;
+
+	// Close the registry key
+	RegCloseKey(hKey);
+
 	return true;
 }
 

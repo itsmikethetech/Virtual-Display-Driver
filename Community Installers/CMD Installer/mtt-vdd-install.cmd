@@ -27,8 +27,8 @@ set "drive=%~d1"
 :: Create target folder
 md %fullpath%
 
-:: Set systemvariable to target folder
-setx IDD_SAMPLE_DRIVER_CONFIG %fullpath% /m
+:: Set registry key to save target folder, so driver fins configuration files
+reg add "HKLM\SOFTWARE\MikeTheTech\VirtualDisplayDriver" /v VDDPATH /t REG_SZ /d "%fullpath%" /f
 
 :changeing working dir for batchscript
 %drive%
@@ -46,10 +46,6 @@ pnputil -i -a %fullpath%\IddSampleDriver.inf
 :: Installs the other part of the driver, depends on vddcon.exe in bin folder(static compiled devcon.exe)
 %fullpath%\bin\vddcon.exe install %fullpath%\iddsampledriver.inf ROOT\IddSampleDriver
 
-:: Powershell settings and components needed for the scripts, works but looks ugly with red text
-:: powershell.exe -ExecutionPolicy Bypass -Command "Register-PSRepository -Default -InstallationPolicy Trusted"
-:: powershell.exe -ExecutionPolicy Bypass -Command "Install-Module -Name DisplayConfig -Force -Scope CurrentUser -Repository PSGallery"
-:: powershell.exe -ExecutionPolicy Bypass -Command "Install-Module -Name MonitorConfig -Force -Scope CurrentUser -Repository PSGallery"
 goto eof
 
 :usage
