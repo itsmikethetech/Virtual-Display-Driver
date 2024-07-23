@@ -132,6 +132,7 @@
     <IDDCX_VERSION_MINOR>10</IDDCX_VERSION_MINOR>
     <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
     <UMDF_VERSION_MINOR>25</UMDF_VERSION_MINOR>
+    <UMDF_MINIMUM_VERSION_REQUIRED>25</UMDF_MINIMUM_VERSION_REQUIRED>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
