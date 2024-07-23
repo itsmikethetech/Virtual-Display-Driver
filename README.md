@@ -5,12 +5,12 @@ Supports emulating resolutions from **640 x 480** to **7680 x 4320 (8K)**, and r
 
 This project uses the official Windows Indirect Display Driver combined with the IddCx class extension driver.
 
-## Download
+## Download Stable Version
 
 - [Windows 10 and 11 (no HDR)](https://github.com/itsmikethetech/Virtual-Display-Driver/releases/tag/23.10.20.2)
-- [Windows 11 23H3+ (HDR)](https://github.com/itsmikethetech/Virtual-Display-Driver/releases/tag/24.7.18HDR) - Adds support for manual GPU switching.
+ [Windows 11 23H2+ (HDR)](https://github.com/itsmikethetech/Virtual-Display-Driver/releases/tag/23.12.2HDR)
 
-## Beta
+## Download Beta
 - Windows 10 and 11 (no HDR) - Coming Soon, adds support for manual GPU switching.
 - [Windows 11 23H3+ (HDR)](https://github.com/itsmikethetech/Virtual-Display-Driver/releases/tag/23.12.2HDR) - Adds support for manual GPU switching.
 - Source available now for personal builds. Thanks to Sajidur78 for the PR.
