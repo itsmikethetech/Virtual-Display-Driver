@@ -32,7 +32,7 @@ This project uses the official Windows Indirect Display Driver combined with the
 7. You are done! Go to display settings to customize the resolution of the additional displays. These displays show up in Sunshine, your Oculus or VR settings, and should be able to be streamed from.
 8. You can enable/disable the display adapter to toggle the monitors.
 
-**Ps.** Make sure that `options.txt` is accessible for the system at `C:\IddSampleDriver\option.txt` or the installation will fail.
+**Ps.** Make sure that `option.txt` is accessible for the system at `C:\IddSampleDriver\option.txt` or the installation will fail. If you have any screen resolutions/refresh rates not in `option.txt`, you can add them in the file.
 
 ---
 
