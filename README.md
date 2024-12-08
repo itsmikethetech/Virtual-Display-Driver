@@ -55,6 +55,15 @@ This project uses the official Windows Indirect Display Driver combined with the
 3. Right click on IddSampleDriver, choose "Uninstall device"
 4. There is a new popup window, in there click Attempt to remove driver for this device.
 
+To uninstall the root certificate:
+
+1. Search for "Manage user certificates" from the Start menu and open the app.
+2. In the sidebar, open the `Certificates - Current User` -> `Trusted Root Certification Authorities` -> `Certificates` folder.
+3. Scroll to the bottom of the list on the right hand side pane, you should see "Virtual Display Driver".
+4. Right click "Virtual Display Driver" and hit "Delete".
+5. In the warning that appears, choose "Yes".
+6. The root certificate has now been deleted and you can close the "Manage user certificates" window.
+
 ## Manual/Forced Uninstall
 
 Next instructions are for those cases where the device is removed from the system, but driver stil remains. This happens when there is a connection to the device while trying to remove the drivers. To
