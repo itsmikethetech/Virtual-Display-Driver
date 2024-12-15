@@ -55,14 +55,6 @@ This project uses the official Windows Indirect Display Driver combined with the
 3. Right click on IddSampleDriver, choose "Uninstall device"
 4. There is a new popup window, in there click Attempt to remove driver for this device.
 
-To uninstall the root certificate:
-
-1. Search for "Manage user certificates" from the Start menu and open the app.
-2. In the sidebar, open the `Certificates - Current User` -> `Trusted Root Certification Authorities` -> `Certificates` folder.
-3. Scroll to the bottom of the list on the right hand side pane, you should see "Virtual Display Driver".
-4. Right click "Virtual Display Driver" and hit "Delete".
-5. In the warning that appears, choose "Yes".
-6. The root certificate has now been deleted and you can close the "Manage user certificates" window.
 
 ## Manual/Forced Uninstall
 
@@ -74,6 +66,22 @@ remedy this, there is a a few tricks built into windows. So here goes:
 3. Locate iddsampledriver.inf, there might be multiple pages of text. Make a note of the "published name", it's often unique for your system, but might look like "oem139.inf"
 4.  ```pnputil /delete-driver oem139.inf```
 5.  (If you still get multiple displays after uninstall, try to repeat uninstall procedure in safemode.)
+
+
+
+## Removing Certificates (Optional)
+
+To uninstall the root certificate:
+
+1. Search for "Manage computer certificates" from the Start menu and open the app.
+2. In the sidebar, expand `Trusted Root Certification Authorities` -> `Certificates` folder.
+3. Scroll to the bottom, until you see "Virtual Display Driver".
+4. Right click "Virtual Display Driver" and hit "Delete". In the warning that appears, choose "Yes".
+5. In the sidebar, expand `Trusted Publishers` -> `Certificates` folder.
+6. Scroll to the bottom, until you see "Virtual Display Driver". 
+7. Right click "Virtual Display Driver" and hit "Delete". In the warning that appears, choose "Yes".
+
+
 
 ## HDR Support Now Available for Windows 11 22H2+ 
 
