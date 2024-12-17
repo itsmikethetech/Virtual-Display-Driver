@@ -64,6 +64,13 @@ projects.
 
 ![image](https://github.com/itsmikethetech/Virtual-Display-Driver/assets/25166211/02af86f2-b896-4265-9174-b17c9a1aeab7)
 
+## License
+
+MIT and CC0 or Public Domain (for changes I made, please consult Microsoft for their license), choose the least restrictive option.
+
+## Disclaimer:
+
+This software is provided "AS IS" with NO IMPLICIT OR EXPLICIT warranty. It's worth noting that while this software functioned without issues on my system, there is no guarantee that it will not impact your computer. It operates in User Mode, which reduces the likelihood of causing system instability, such as the Blue Screen of Death. However, exercise caution when using this software.
 
 ## 🤝 Sponsors
 
@@ -73,14 +80,6 @@ projects.
     <td>Free code signing on Windows provided by <a href="https://signpath.io">SignPath.io</a>, certificate by <a href="https://signpath.org">SignPath Foundation</a></td>
   </tr>
 </table>
-
-## License
-
-MIT and CC0 or Public Domain (for changes I made, please consult Microsoft for their license), choose the least restrictive option.
-
-## Disclaimer:
-
-This software is provided "AS IS" with NO IMPLICIT OR EXPLICIT warranty. It's worth noting that while this software functioned without issues on my system, there is no guarantee that it will not impact your computer. It operates in User Mode, which reduces the likelihood of causing system instability, such as the Blue Screen of Death. However, exercise caution when using this software.
 
 ## Acknowledgements
 
