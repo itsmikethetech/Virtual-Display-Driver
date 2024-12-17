@@ -34,37 +34,19 @@ This project uses the official Windows Indirect Display Driver combined with the
 
 **Ps.** Make sure that `options.txt` is accessible for the system at `C:\IddSampleDriver\options.txt` or the installation will fail.
 
----
+ ## 🤔 Comparison with other IDDs
 
-### Beta Release Instructions
+The table below shows a comparison with other popular Indirect Display Driver
+projects.
 
-1. Download the beta version and extract the contents to a folder.
-2. Copy the `\VirtualDisplayDriver\` folder and its contents to `C:\VirtualDisplayDriver\` before installing the driver **(important!)**.
-3. Right click and run the *.bat file **as an Administrator** to add the driver certificate as a trusted root certificate.
-4. Don't install the inf. Open device manager, click on any device, then click on the "Action" menu and click "Add Legacy Hardware".
-5. Select "Add hardware from a list (Advanced)" and then select Display adapters.
-6. Click "Have Disk..." and click the "Browse..." button. Navigate to the extracted files and select the inf file.
-7. You are done! Go to display settings to customize the resolution of the additional displays. These displays show up in Sunshine, your Oculus or VR settings, and should be able to be streamed from.
-8. You can enable/disable the display adapter to toggle the monitors.
-
-
-## Easy Uninstall
-
-1. Open device manager
-2. Locate Display Adapters
-3. Right click on IddSampleDriver, choose "Uninstall device"
-4. There is a new popup window, in there click Attempt to remove driver for this device.
-
-## Manual/Forced Uninstall
-
-Next instructions are for those cases where the device is removed from the system, but driver stil remains. This happens when there is a connection to the device while trying to remove the drivers. To
-remedy this, there is a a few tricks built into windows. So here goes:
-
-1. Open up a powershell terminal and input this:
-2.  ```pnputil /enum-drivers```
-3. Locate iddsampledriver.inf, there might be multiple pages of text. Make a note of the "published name", it's often unique for your system, but might look like "oem139.inf"
-4.  ```pnputil /delete-driver oem139.inf```
-5.  (If you still get multiple displays after uninstall, try to repeat uninstall procedure in safemode.)
+| Project                        |   Iddcx version   | Signed | SDR | HDR  |                               H-Cursor                               | Tweakable | ARM64 Support | Custom EDID | Floating Point Refresh Rates |
+| :----------------------------- | :---------------: | :----: | :--: | :------------------------------------------------------------------: | :-------: | :-------: | :-------: | :-------: | :-------: |
+| [Virtual-Display-Driver (HDR)] |   1.10 (latest)   |   ✅   |     ✅ (8/10bit)    | ✅ (8/10/12bit)  |                                  ✅                                 |    ✅    |     ✅    |    ✅    |    ✅    |
+| [usbmmidd_v2]                  |                   |   ✅   |     ✅ (8bit)    |   |                                                                   |           |           |           |           |           |
+| [virtual-display-rs]           |         1.5       |      |     ✅ (8bit)    |   | [#81](https://github.com/MolotovCherry/virtual-display-rs/issues/81) |    ✅    |           |           |           |           |
+| parsec-vdd                     |         1.5       |   ✅   |     ✅ (8bit)    |   |                                  ✅                                 |    🆗     |           |           |           |           |
+| [IddSampleDriver]              |         1.2       |      |     ✅ (8bit)    |   |                                                                   |           |           |           |           |           |
+| [RustDeskIddDriver]            |         1.2       |      |     ✅ (8bit)    |   |                                                                   |           |           |           |           |           |
 
 ## HDR Support Now Available for Windows 11 22H2+ 
 
@@ -81,6 +63,16 @@ remedy this, there is a a few tricks built into windows. So here goes:
 ![image](https://github.com/itsmikethetech/Virtual-Display-Driver/assets/25166211/5cb8ce08-890f-4bc1-a1a6-34f22e103699)
 
 ![image](https://github.com/itsmikethetech/Virtual-Display-Driver/assets/25166211/02af86f2-b896-4265-9174-b17c9a1aeab7)
+
+
+## 🤝 Sponsors
+
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/ca93d971-67dc-41dd-b945-ab4f372ea72a" /></td>
+    <td>Free code signing on Windows provided by <a href="https://signpath.io">SignPath.io</a>, certificate by <a href="https://signpath.org">SignPath Foundation</a></td>
+  </tr>
+</table>
 
 ## License
 
